@@ -4,6 +4,7 @@ using Fiap.CustomerService.Application.UseCases.DeleteCustomerUseCase;
 using Fiap.CustomerService.Application.UseCases.GetAllCustomersUseCase;
 using Fiap.CustomerService.Application.UseCases.GetCustomerByDocumentNumberUseCase;
 using Fiap.CustomerService.Application.UseCases.GetCustomerByIdUseCase;
+using Fiap.CustomerService.Application.UseCases.UpdateCustomerUseCase;
 using Fiap.CustomerService.Infrastructure.Extensions;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -94,6 +95,19 @@ app.MapDelete("/customers/{id}", async (int id, DeleteCustomerUseCase useCase) =
     {
         var result = await useCase.ExecuteAsync(id);
         return result.IsSuccess ? Results.NoContent() : Results.NotFound(result.Errors);
+    }
+    catch (Exception ex)
+    {
+        return Results.Problem(ex.Message, statusCode: 500);
+    }
+});
+
+app.MapPut("/customers/{id}", async (int id, UpdateCustomerInput input, UpdateCustomerUseCase useCase) =>
+{
+    try
+    {
+        var result = await useCase.ExecuteAsync(id, input);
+        return result.IsSuccess ? Results.Ok(result.Data) : Results.BadRequest(result.Errors);
     }
     catch (Exception ex)
     {

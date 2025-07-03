@@ -1,10 +1,9 @@
-﻿namespace Fiap.CustomerService.Application.UseCases.CreateCustomerUseCase
+﻿namespace Fiap.CustomerService.Application.UseCases.UpdateCustomerUseCase
 {
-    public class CreateCustomerInput
+    public class UpdateCustomerInput
     {
         public required string FirstName { get; set; }
         public required string LastName { get; set; }
-        public required string DocumentNumber { get; set; }
         public required DateTime DateOfBirth { get; set; }
         public required string Email { get; set; }
         public required string PhoneNumber { get; set; }
