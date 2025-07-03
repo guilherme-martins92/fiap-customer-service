@@ -1,4 +1,5 @@
 ﻿using Fiap.CustomerService.Application.UseCases.CreateCustomerUseCase;
+using Fiap.CustomerService.Application.UseCases.GetAllCustomersUseCase;
 using FluentValidation;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -17,6 +18,7 @@ namespace Fiap.CustomerService.Application.Extensions
         public static IServiceCollection AddApplication(this IServiceCollection services)
         {
             services.AddScoped<CreateCustomerUseCase>();
+            services.AddScoped<GetAllCustomersUseCase>();
             services.AddScoped<IValidator<CreateCustomerInput>, CreateCustomerValidator>();
             return services;
         }

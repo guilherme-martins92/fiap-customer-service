@@ -5,13 +5,19 @@ namespace Fiap.CustomerService.Infrastructure.Repositories
 {
     public class CustomerRepository : ICustomerRepository
     {
-        private readonly List<Customer> _customers = new();
+        private readonly List<Customer> _customers = new List<Customer>();
         public Task AddAsync(Customer customer)
         {
             customer.Id = _customers.Count + 1; // Simple ID generation
             _customers.Add(customer);
             return Task.CompletedTask;
         }
+
+        public Task<IEnumerable<Customer>> GetAllAsync()
+        {
+            return Task.FromResult<IEnumerable<Customer>>(_customers);
+        }
+
         public Task<Customer?> GetByIdAsync(int id)
         {
             var customer = _customers.FirstOrDefault(c => c.Id == id);

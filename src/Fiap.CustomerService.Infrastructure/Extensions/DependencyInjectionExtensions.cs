@@ -15,7 +15,7 @@ namespace Fiap.CustomerService.Infrastructure.Extensions
         /// <returns>The updated <see cref="IServiceCollection"/> with the added services.</returns>
         public static IServiceCollection AddInfrastructure(this IServiceCollection services, IConfiguration configuration)
         {
-            services.AddScoped<ICustomerRepository, CustomerRepository>();
+            services.AddSingleton<ICustomerRepository, CustomerRepository>();
 
             return services;
         }

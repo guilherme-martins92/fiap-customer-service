@@ -1,5 +1,6 @@
 using Fiap.CustomerService.Application.Extensions;
 using Fiap.CustomerService.Application.UseCases.CreateCustomerUseCase;
+using Fiap.CustomerService.Application.UseCases.GetAllCustomersUseCase;
 using Fiap.CustomerService.Infrastructure.Extensions;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -37,6 +38,20 @@ app.MapPost("/customers", async (CreateCustomerInput input, CreateCustomerUseCas
         {
             return Results.BadRequest(result.Errors);
         }
+    }
+    catch (Exception ex)
+    {
+        return Results.Problem(ex.Message, statusCode: 500);
+    }
+});
+
+app.MapGet("/customers", async (GetAllCustomersUseCase useCase) =>
+{
+    try
+    {
+        var result = await useCase.ExecuteAsync();
+
+        return result.IsSuccess ? Results.Ok(result.Data) : Results.NotFound(result.Errors);
     }
     catch (Exception ex)
     {
