@@ -1,6 +1,8 @@
 using Fiap.CustomerService.Application.Extensions;
 using Fiap.CustomerService.Application.UseCases.CreateCustomerUseCase;
 using Fiap.CustomerService.Application.UseCases.GetAllCustomersUseCase;
+using Fiap.CustomerService.Application.UseCases.GetCustomerByDocumentNumberUseCase;
+using Fiap.CustomerService.Application.UseCases.GetCustomerByIdUseCase;
 using Fiap.CustomerService.Infrastructure.Extensions;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -51,6 +53,32 @@ app.MapGet("/customers", async (GetAllCustomersUseCase useCase) =>
     {
         var result = await useCase.ExecuteAsync();
 
+        return result.IsSuccess ? Results.Ok(result.Data) : Results.NotFound(result.Errors);
+    }
+    catch (Exception ex)
+    {
+        return Results.Problem(ex.Message, statusCode: 500);
+    }
+});
+
+app.MapGet("/customers/{id}", async (int id, GetCustomerByIdUseCase useCase) =>
+{
+    try
+    {
+        var result = await useCase.ExecuteAsync(id);
+        return result.IsSuccess ? Results.Ok(result.Data) : Results.NotFound(result.Errors);
+    }
+    catch (Exception ex)
+    {
+        return Results.Problem(ex.Message, statusCode: 500);
+    }
+});
+
+app.MapGet("/customers/document/{documentNumber}", async (string documentNumber, GetCustomerByDocumentNumberUseCase useCase) =>
+{
+    try
+    {
+        var result = await useCase.ExecuteAsync(documentNumber);
         return result.IsSuccess ? Results.Ok(result.Data) : Results.NotFound(result.Errors);
     }
     catch (Exception ex)

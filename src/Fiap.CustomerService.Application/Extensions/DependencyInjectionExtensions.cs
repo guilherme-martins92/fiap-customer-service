@@ -1,5 +1,7 @@
 ﻿using Fiap.CustomerService.Application.UseCases.CreateCustomerUseCase;
 using Fiap.CustomerService.Application.UseCases.GetAllCustomersUseCase;
+using Fiap.CustomerService.Application.UseCases.GetCustomerByDocumentNumberUseCase;
+using Fiap.CustomerService.Application.UseCases.GetCustomerByIdUseCase;
 using FluentValidation;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -19,6 +21,8 @@ namespace Fiap.CustomerService.Application.Extensions
         {
             services.AddScoped<CreateCustomerUseCase>();
             services.AddScoped<GetAllCustomersUseCase>();
+            services.AddScoped<GetCustomerByIdUseCase>();
+            services.AddScoped<GetCustomerByDocumentNumberUseCase>();
             services.AddScoped<IValidator<CreateCustomerInput>, CreateCustomerValidator>();
             return services;
         }

@@ -23,6 +23,11 @@ namespace Fiap.CustomerService.Infrastructure.Repositories
             var customer = _customers.FirstOrDefault(c => c.Id == id);
             return Task.FromResult(customer);
         }
+        public Task<Customer?> GetByDocumentNumberlAsync(string documentNumber)
+        {
+            var customer = _customers.FirstOrDefault(c => c.DocumentNumber == documentNumber);
+            return Task.FromResult(customer);
+        }
         public Task UpdateAsync(Customer customer)
         {
             var existingCustomer = _customers.FirstOrDefault(c => c.Id == customer.Id);

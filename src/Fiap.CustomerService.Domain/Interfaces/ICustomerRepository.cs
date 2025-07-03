@@ -9,6 +9,8 @@ namespace Fiap.CustomerService.Domain.Interfaces
 
         Task<Customer?> GetByIdAsync(int id);
 
+        Task<Customer?> GetByDocumentNumberlAsync(string documentNumber);
+
         Task UpdateAsync(Customer customer);
 
         Task DeleteAsync(int id);
