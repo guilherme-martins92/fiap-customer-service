@@ -15,11 +15,11 @@ namespace Fiap.CustomerService.Application.UseCases.GetCustomerByIdUseCase
             _logger = logger;
         }
 
-        public async Task<Result<Customer>> ExecuteAsync(int id)
+        public async Task<Result<Customer>> ExecuteAsync(Guid id)
         {
             try
             {
-                if (id <= 0)
+                if (id == Guid.Empty)
                 {
                     _logger.LogError("Invalid customer ID: {Id}", id);
                     return Result<Customer>.Failure(new List<string> { "Invalid customer ID." });

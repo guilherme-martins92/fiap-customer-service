@@ -19,7 +19,7 @@ namespace Fiap.CustomerService.Application.UseCases.UpdateCustomerUseCase
             _validator = validator;
         }
 
-        public async Task<Result<Customer>> ExecuteAsync(int id, UpdateCustomerInput updateCustomerInput)
+        public async Task<Result<Customer>> ExecuteAsync(Guid id, UpdateCustomerInput updateCustomerInput)
         {
             try
             {

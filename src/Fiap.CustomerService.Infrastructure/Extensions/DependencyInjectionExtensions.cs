@@ -1,4 +1,6 @@
-﻿using Fiap.CustomerService.Domain.Interfaces;
+﻿using Amazon.DynamoDBv2;
+using Amazon.DynamoDBv2.DataModel;
+using Fiap.CustomerService.Domain.Interfaces;
 using Fiap.CustomerService.Infrastructure.Repositories;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -15,7 +17,13 @@ namespace Fiap.CustomerService.Infrastructure.Extensions
         /// <returns>The updated <see cref="IServiceCollection"/> with the added services.</returns>
         public static IServiceCollection AddInfrastructure(this IServiceCollection services, IConfiguration configuration)
         {
-            services.AddSingleton<ICustomerRepository, CustomerRepository>();
+            services.AddScoped<ICustomerRepository, CustomerRepository>();
+
+            // Register DynamoDB client
+            services.AddAWSService<IAmazonDynamoDB>();
+
+            // Register DynamoDB context
+            services.AddScoped<IDynamoDBContext, DynamoDBContext>();
 
             return services;
         }

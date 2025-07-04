@@ -1,4 +1,5 @@
-﻿using Fiap.CustomerService.Domain.Entities;
+﻿using Amazon.DynamoDBv2.DataModel;
+using Fiap.CustomerService.Domain.Entities;
 using Fiap.CustomerService.Domain.Interfaces;
 
 namespace Fiap.CustomerService.Infrastructure.Repositories
@@ -6,11 +7,16 @@ namespace Fiap.CustomerService.Infrastructure.Repositories
     public class CustomerRepository : ICustomerRepository
     {
         private readonly List<Customer> _customers = new List<Customer>();
-        public Task AddAsync(Customer customer)
+        private readonly IDynamoDBContext _context;
+
+        public CustomerRepository(IDynamoDBContext context)
         {
-            customer.Id = _customers.Count + 1; // Simple ID generation
-            _customers.Add(customer);
-            return Task.CompletedTask;
+            _context = context;
+        }
+
+        public async Task AddAsync(Customer customer)
+        {
+            await _context.SaveAsync(customer);
         }
 
         public Task<IEnumerable<Customer>> GetAllAsync()
@@ -18,7 +24,7 @@ namespace Fiap.CustomerService.Infrastructure.Repositories
             return Task.FromResult<IEnumerable<Customer>>(_customers);
         }
 
-        public Task<Customer?> GetByIdAsync(int id)
+        public Task<Customer?> GetByIdAsync(Guid id)
         {
             var customer = _customers.FirstOrDefault(c => c.Id == id);
             return Task.FromResult(customer);
@@ -56,7 +62,7 @@ namespace Fiap.CustomerService.Infrastructure.Repositories
             }
             return Task.CompletedTask;
         }
-        public Task DeleteAsync(int id)
+        public Task DeleteAsync(Guid id)
         {
             var customer = _customers.FirstOrDefault(c => c.Id == id);
             if (customer != null)

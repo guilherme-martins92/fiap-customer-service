@@ -67,6 +67,7 @@ namespace Fiap.CustomerService.Application.UseCases.CreateCustomerUseCase
         {
             return new Customer
             {
+                Id = Guid.NewGuid(),
                 FirstName = customer.FirstName,
                 LastName = customer.LastName,
                 DocumentNumber = customer.DocumentNumber,

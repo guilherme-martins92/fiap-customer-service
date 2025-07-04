@@ -64,7 +64,7 @@ app.MapGet("/customers", async (GetAllCustomersUseCase useCase) =>
     }
 });
 
-app.MapGet("/customers/{id}", async (int id, GetCustomerByIdUseCase useCase) =>
+app.MapGet("/customers/{id}", async (Guid id, GetCustomerByIdUseCase useCase) =>
 {
     try
     {
@@ -103,7 +103,7 @@ app.MapGet("/customers/email/{email}", async (string email, GetCustomerByEmailUs
     }
 });
 
-app.MapDelete("/customers/{id}", async (int id, DeleteCustomerUseCase useCase) =>
+app.MapDelete("/customers/{id}", async (Guid id, DeleteCustomerUseCase useCase) =>
 {
     try
     {
@@ -116,7 +116,7 @@ app.MapDelete("/customers/{id}", async (int id, DeleteCustomerUseCase useCase) =
     }
 });
 
-app.MapPut("/customers/{id}", async (int id, UpdateCustomerInput input, UpdateCustomerUseCase useCase) =>
+app.MapPut("/customers/{id}", async (Guid id, UpdateCustomerInput input, UpdateCustomerUseCase useCase) =>
 {
     try
     {
