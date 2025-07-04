@@ -3,6 +3,7 @@ using Fiap.CustomerService.Application.UseCases.CreateCustomerUseCase;
 using Fiap.CustomerService.Application.UseCases.DeleteCustomerUseCase;
 using Fiap.CustomerService.Application.UseCases.GetAllCustomersUseCase;
 using Fiap.CustomerService.Application.UseCases.GetCustomerByDocumentNumberUseCase;
+using Fiap.CustomerService.Application.UseCases.GetCustomerByEmailUseCase;
 using Fiap.CustomerService.Application.UseCases.GetCustomerByIdUseCase;
 using Fiap.CustomerService.Application.UseCases.UpdateCustomerUseCase;
 using Fiap.CustomerService.Infrastructure.Extensions;
@@ -81,6 +82,19 @@ app.MapGet("/customers/document/{documentNumber}", async (string documentNumber,
     try
     {
         var result = await useCase.ExecuteAsync(documentNumber);
+        return result.IsSuccess ? Results.Ok(result.Data) : Results.NotFound(result.Errors);
+    }
+    catch (Exception ex)
+    {
+        return Results.Problem(ex.Message, statusCode: 500);
+    }
+});
+
+app.MapGet("/customers/email/{email}", async (string email, GetCustomerByEmailUseCase useCase) =>
+{
+    try
+    {
+        var result = await useCase.ExecuteAsync(email);
         return result.IsSuccess ? Results.Ok(result.Data) : Results.NotFound(result.Errors);
     }
     catch (Exception ex)

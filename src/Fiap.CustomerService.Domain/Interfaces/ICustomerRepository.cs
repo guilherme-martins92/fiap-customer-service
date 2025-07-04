@@ -6,13 +6,10 @@ namespace Fiap.CustomerService.Domain.Interfaces
     {
         Task AddAsync(Customer customer);
         Task<IEnumerable<Customer>> GetAllAsync();
-
         Task<Customer?> GetByIdAsync(int id);
-
         Task<Customer?> GetByDocumentNumberlAsync(string documentNumber);
-
+        Task<Customer?> GetByEmailAsync(string email);
         Task UpdateAsync(Customer customer);
-
         Task DeleteAsync(int id);
     }
 }
