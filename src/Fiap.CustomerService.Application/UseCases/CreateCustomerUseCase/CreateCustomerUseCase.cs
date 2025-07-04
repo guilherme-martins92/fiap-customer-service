@@ -28,11 +28,17 @@ namespace Fiap.CustomerService.Application.UseCases.CreateCustomerUseCase
             }
 
             var validationResult = await _validator.ValidateAsync(customer);
-
             if (!validationResult.IsValid)
             {
                 _logger.LogError("Validation failed: {Errors}", validationResult.Errors);
                 return Result<Customer>.Failure(validationResult.Errors.Select(e => e.ErrorMessage).ToList());
+            }
+
+            var existingCustomer = await _customerRepository.GetByDocumentNumberlAsync(customer.DocumentNumber);
+            if (existingCustomer != null)
+            {
+                _logger.LogWarning("Customer with document number {DocumentNumber} already exists.", customer.DocumentNumber);
+                return Result<Customer>.Failure(new List<string> { "Customer with this document number already exists." });
             }
 
             var newCustomer = new Customer
