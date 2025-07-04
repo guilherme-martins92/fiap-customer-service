@@ -5,8 +5,7 @@ using Fiap.CustomerService.Domain.Interfaces;
 namespace Fiap.CustomerService.Infrastructure.Repositories
 {
     public class CustomerRepository : ICustomerRepository
-    {
-        private readonly List<Customer> _customers = new List<Customer>();
+    { 
         private readonly IDynamoDBContext _context;
 
         public CustomerRepository(IDynamoDBContext context)
@@ -19,57 +18,56 @@ namespace Fiap.CustomerService.Infrastructure.Repositories
             await _context.SaveAsync(customer);
         }
 
-        public Task<IEnumerable<Customer>> GetAllAsync()
+        public async Task<IEnumerable<Customer>> GetAllAsync()
         {
-            return Task.FromResult<IEnumerable<Customer>>(_customers);
+            var customers = await _context.ScanAsync<Customer>(new List<ScanCondition>()).GetRemainingAsync();
+            return customers;
         }
 
-        public Task<Customer?> GetByIdAsync(Guid id)
+        public async Task<Customer?> GetByIdAsync(Guid id)
         {
-            var customer = _customers.FirstOrDefault(c => c.Id == id);
-            return Task.FromResult(customer);
+            var customer = await _context.LoadAsync<Customer>(id);
+            return customer;
         }
 
-        public Task<Customer?> GetByDocumentNumberlAsync(string documentNumber)
+        public async Task<Customer?> GetByDocumentNumberlAsync(string documentNumber)
         {
-            var customer = _customers.FirstOrDefault(c => c.DocumentNumber == documentNumber);
-            return Task.FromResult(customer);
-        }
-        public Task<Customer?> GetByEmailAsync(string email)
-        {
-            var customer = _customers.FirstOrDefault(c => c.Email == email);
-            return Task.FromResult(customer);
+            var queryConfig = new QueryConfig
+            {
+                IndexName = "DocumentNumber-index"
+            };
+            var search = _context.QueryAsync<Customer>(documentNumber, queryConfig);
+            var results = await search.GetNextSetAsync();
+            return results.FirstOrDefault();
         }
 
-        public Task UpdateAsync(Customer customer)
+        public async Task<Customer?> GetByEmailAsync(string email)
         {
-            var existingCustomer = _customers.FirstOrDefault(c => c.Id == customer.Id);
+            var queryConfig = new QueryConfig
+            {
+                IndexName = "Email-index"
+            };
+
+            var search = _context.QueryAsync<Customer>(email, queryConfig);
+            var results = await search.GetNextSetAsync();
+            return results.FirstOrDefault();
+        }
+
+        public async Task UpdateAsync(Customer customer)
+        {
+            var existingCustomer = await _context.LoadAsync<Customer>(customer.Id);
             if (existingCustomer != null)
             {
-                existingCustomer.FirstName = customer.FirstName;
-                existingCustomer.LastName = customer.LastName;
-                existingCustomer.DocumentNumber = customer.DocumentNumber;
-                existingCustomer.DateOfBirth = customer.DateOfBirth;
-                existingCustomer.Email = customer.Email;
-                existingCustomer.PhoneNumber = customer.PhoneNumber;
-                existingCustomer.Street = customer.Street;
-                existingCustomer.HouseNumber = customer.HouseNumber;
-                existingCustomer.City = customer.City;
-                existingCustomer.State = customer.State;
-                existingCustomer.PostalCode = customer.PostalCode;
-                existingCustomer.Country = customer.Country;
-                existingCustomer.UpdatedAt = DateTime.UtcNow;
+                await _context.SaveAsync(customer);
             }
-            return Task.CompletedTask;
         }
-        public Task DeleteAsync(Guid id)
+        public async Task DeleteAsync(Guid id)
         {
-            var customer = _customers.FirstOrDefault(c => c.Id == id);
+            var customer = await _context.LoadAsync<Customer>(id);
             if (customer != null)
             {
-                _customers.Remove(customer);
+                await _context.DeleteAsync(customer);
             }
-            return Task.CompletedTask;
         }
     }
 }
