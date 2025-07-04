@@ -34,14 +34,38 @@ namespace Fiap.CustomerService.Application.UseCases.CreateCustomerUseCase
                 return Result<Customer>.Failure(validationResult.Errors.Select(e => e.ErrorMessage).ToList());
             }
 
-            var existingCustomer = await _customerRepository.GetByDocumentNumberlAsync(customer.DocumentNumber);
-            if (existingCustomer != null)
+            var duplicateErrors = await CheckForDuplicatesAsync(customer);
+            if (duplicateErrors is not null)
+                return duplicateErrors;
+
+            var newCustomer = BuildCustomer(customer);
+
+            await _customerRepository.AddAsync(newCustomer);
+
+            _logger.LogInformation("Customer created successfully with ID: {CustomerId}", newCustomer.Id);
+            return Result<Customer>.Success(newCustomer);
+        }
+
+        private async Task<Result<Customer>?> CheckForDuplicatesAsync(CreateCustomerInput customer)
+        {
+            if (await _customerRepository.GetByDocumentNumberlAsync(customer.DocumentNumber) is not null)
             {
-                _logger.LogWarning("Customer with document number {DocumentNumber} already exists.", customer.DocumentNumber);
-                return Result<Customer>.Failure(new List<string> { "Customer with this document number already exists." });
+                _logger.LogWarning("Duplicate document: {DocumentNumber}", customer.DocumentNumber);
+                return Result<Customer>.Failure(["Customer with this document number already exists."]);
             }
 
-            var newCustomer = new Customer
+            if (await _customerRepository.GetByEmailAsync(customer.Email) is not null)
+            {
+                _logger.LogWarning("Duplicate email: {Email}", customer.Email);
+                return Result<Customer>.Failure(["Customer with this email already exists."]);
+            }
+
+            return null;
+        }
+
+        private Customer BuildCustomer(CreateCustomerInput customer)
+        {
+            return new Customer
             {
                 FirstName = customer.FirstName,
                 LastName = customer.LastName,
@@ -58,11 +82,6 @@ namespace Fiap.CustomerService.Application.UseCases.CreateCustomerUseCase
                 CreatedAt = DateTime.UtcNow,
                 UpdatedAt = DateTime.UtcNow
             };
-
-            await _customerRepository.AddAsync(newCustomer);
-
-            _logger.LogInformation("Customer created successfully with ID: {CustomerId}", newCustomer.Id);
-            return Result<Customer>.Success(newCustomer);
         }
     }
 }
