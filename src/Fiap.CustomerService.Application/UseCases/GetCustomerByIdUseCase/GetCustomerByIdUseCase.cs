@@ -15,30 +15,30 @@ namespace Fiap.CustomerService.Application.UseCases.GetCustomerByIdUseCase
             _logger = logger;
         }
 
-        public async Task<Result<Customer>> ExecuteAsync(Guid id)
+        public async Task<Result<GetCustomerByIdOutput>> ExecuteAsync(Guid id)
         {
             try
             {
                 if (id == Guid.Empty)
                 {
                     _logger.LogError("Invalid customer ID: {Id}", id);
-                    return Result<Customer>.Failure(new List<string> { "Invalid customer ID." });
+                    return Result<GetCustomerByIdOutput>.Failure(new List<string> { "Invalid customer ID." });
                 }
 
                 var customer = await _customerRepository.GetByIdAsync(id);
                 if (customer == null)
                 {
                     _logger.LogWarning("Customer not found with ID: {Id}", id);
-                    return Result<Customer>.Failure(new List<string> { "Customer not found." });
+                    return Result<GetCustomerByIdOutput>.Failure(new List<string> { "Customer not found." });
                 }
 
                 _logger.LogInformation("Customer retrieved successfully with ID: {Id}", id);
-                return Result<Customer>.Success(customer);
+                return Result<GetCustomerByIdOutput>.Success(GetCustomerByIdOutput.FromEntity(customer));
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex, "An error occurred while retrieving customer with ID: {Id}", id);
-                return Result<Customer>.Failure(new List<string> { "An error occurred while retrieving the customer." });
+                return Result<GetCustomerByIdOutput>.Failure(new List<string> { "An error occurred while retrieving the customer." });
             }
         }
     }

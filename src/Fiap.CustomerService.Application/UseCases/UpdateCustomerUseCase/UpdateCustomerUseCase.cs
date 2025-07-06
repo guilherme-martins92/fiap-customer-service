@@ -41,12 +41,12 @@ namespace Fiap.CustomerService.Application.UseCases.UpdateCustomerUseCase
                 existingCustomer.LastName = updateCustomerInput.LastName;
                 existingCustomer.DateOfBirth = updateCustomerInput.DateOfBirth;
                 existingCustomer.Email = updateCustomerInput.Email;
-                existingCustomer.PhoneNumber = updateCustomerInput.PhoneNumber;
+                existingCustomer.PhoneNumber = FormatUtils.UnformatPhoneNumber(updateCustomerInput.PhoneNumber);
                 existingCustomer.Street = updateCustomerInput.Street;
                 existingCustomer.HouseNumber = updateCustomerInput.HouseNumber;
                 existingCustomer.City = updateCustomerInput.City;
                 existingCustomer.State = updateCustomerInput.State;
-                existingCustomer.PostalCode = updateCustomerInput.PostalCode;
+                existingCustomer.PostalCode = FormatUtils.UnformatPostalCode(updateCustomerInput.PostalCode);
                 existingCustomer.Country = updateCustomerInput.Country;
                 existingCustomer.UpdatedAt = DateTime.UtcNow;
                 await _customerRepository.UpdateAsync(existingCustomer);
