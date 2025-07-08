@@ -25,7 +25,7 @@ jobs:
         run: dotnet build src/Fiap.CustomerService.sln --configuration Release --no-restore
 
       - name: Publish artifacts
-        run: dotnet publish -c Release -o ./publish
+        run: dotnet publish src/Fiap.CustomerService.sln  -c Release -o ./publish
       - name: Upload build artifacts
         uses: actions/upload-artifact@v4
         with:
