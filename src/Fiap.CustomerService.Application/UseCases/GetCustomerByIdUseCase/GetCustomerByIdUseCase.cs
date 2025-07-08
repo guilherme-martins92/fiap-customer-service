@@ -1,5 +1,4 @@
 ﻿using Fiap.CustomerService.Application.Common;
-using Fiap.CustomerService.Domain.Entities;
 using Fiap.CustomerService.Domain.Interfaces;
 using Microsoft.Extensions.Logging;
 
