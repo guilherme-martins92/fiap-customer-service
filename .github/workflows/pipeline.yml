@@ -24,7 +24,7 @@ jobs:
         run: dotnet restore src/Fiap.CustomerService.sln
 
       - name: Build da aplicação
-        run: dotnet build src/Fiap.CustomerService.sln--configuration Release
+        run: dotnet build src/Fiap.CustomerService.sln --configuration Release
         
   Tests:
     runs-on: ubuntu-latest
