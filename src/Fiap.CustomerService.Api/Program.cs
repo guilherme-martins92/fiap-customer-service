@@ -10,6 +10,10 @@ using Fiap.CustomerService.Infrastructure.Extensions;
 
 var builder = WebApplication.CreateBuilder(args);
 
+// Add AWS Lambda support. When running the application as an AWS Serverless application, Kestrel is replaced
+// with a Lambda function contained in the Amazon.Lambda.AspNetCoreServer package, which marshals the request into the ASP.NET Core hosting framework.
+builder.Services.AddAWSLambdaHosting(LambdaEventSource.HttpApi);
+
 // Add services to the container.
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();

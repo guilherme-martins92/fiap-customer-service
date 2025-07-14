@@ -1,0 +1,57 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Transform: AWS::Serverless-2016-10-31
+Description: >
+  Arquitetura baseada em microsservicos para catalogo de veiculos, utilizando AWS Lambda e DynamoDB
+
+Globals:
+  Function:
+    Timeout: 100
+
+Resources:
+  ApiFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: CustomerServiceApi
+      Description: "API para gerenciamento de clientes"
+      CodeUri: ./src/Fiap.CustomerService.Api/
+      Handler: Fiap.CustomerService.Api
+      Runtime: dotnet8
+      MemorySize: 1024
+      Environment:
+        Variables:
+          CUSTOMERS_TABLE: !Ref CustomersTable
+      Policies:
+        - DynamoDBCrudPolicy:
+            TableName: !Ref CustomersTable
+      Events:
+        ProxyResource:
+          Type: HttpApi
+          Properties:
+            PayloadFormatVersion: "2.0"
+            Path: /{proxy+}
+            Method: ANY
+        RootResource:
+          PayloadFormatVersion: "2.0"
+          Type: HttpApi
+          Properties:
+            Path: /
+            Method: ANY
+
+  CustomersTable:
+    Type: AWS::Serverless::SimpleTable
+    Properties:
+      TableName: Customers
+      PrimaryKey:
+        Name: Id
+        Type: String
+      ProvisionedThroughput:
+        ReadCapacityUnits: 2
+        WriteCapacityUnits: 2
+
+Outputs:
+  ApiUrl:
+    Description: "API endpoint URL"
+    Value: !Sub "https://${ServerlessHttpApi}.execute-api.${AWS::Region}.amazonaws.com/"
+  CustomersTableName:
+    Description: "DynamoDB Table Name"
+    Value: !Ref CustomersTable
