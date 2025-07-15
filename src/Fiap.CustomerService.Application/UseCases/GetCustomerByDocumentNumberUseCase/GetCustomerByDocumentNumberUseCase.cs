@@ -9,10 +9,16 @@ namespace Fiap.CustomerService.Application.UseCases.GetCustomerByDocumentNumberU
     {
         private readonly ICustomerRepository _customerRepository;
         private readonly ILogger<GetCustomerByDocumentNumberUseCase> _logger;
-        public GetCustomerByDocumentNumberUseCase(ICustomerRepository customerRepository, ILogger<GetCustomerByDocumentNumberUseCase> logger)
+        private readonly IKmsEncryptionService _kmsEncryptionService;
+        private readonly IHashingService _hashingService;
+        private readonly ISensitiveDataDecryptor _sensitiveDataDecryptor;
+        public GetCustomerByDocumentNumberUseCase(ICustomerRepository customerRepository, ILogger<GetCustomerByDocumentNumberUseCase> logger, IKmsEncryptionService kmsEncryptionService, IHashingService hashingService, ISensitiveDataDecryptor sensitiveDataDecryptor)
         {
             _customerRepository = customerRepository;
             _logger = logger;
+            _kmsEncryptionService = kmsEncryptionService;
+            _hashingService = hashingService;
+            _sensitiveDataDecryptor = sensitiveDataDecryptor;
         }
         public async Task<Result<Customer?>> ExecuteAsync(string documentNumber)
         {
@@ -24,12 +30,14 @@ namespace Fiap.CustomerService.Application.UseCases.GetCustomerByDocumentNumberU
                     return Result<Customer?>.Failure(new List<string> { "Document number cannot be null or empty." });
                 }
 
-                var customer = await _customerRepository.GetByDocumentNumberlAsync(documentNumber);
+                var customer = await _customerRepository.GetByDocumentNumberlAsync(await _hashingService.HashValue(documentNumber));
                 if (customer == null)
                 {
                     _logger.LogInformation("No customer found with document number: {DocumentNumber}", documentNumber);
                     return Result<Customer?>.Failure(new List<string> { "Customer not found." });
                 }
+
+                customer = await _sensitiveDataDecryptor.DecryptcustomerAsync(customer);
 
                 _logger.LogInformation("Customer found with document number: {DocumentNumber}", documentNumber);
                 return Result<Customer?>.Success(customer);

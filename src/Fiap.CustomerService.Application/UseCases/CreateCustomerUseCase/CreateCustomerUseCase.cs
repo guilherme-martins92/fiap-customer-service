@@ -11,12 +11,16 @@ namespace Fiap.CustomerService.Application.UseCases.CreateCustomerUseCase
         private readonly ICustomerRepository _customerRepository;
         private readonly IValidator<CreateCustomerInput> _validator;
         private readonly ILogger<CreateCustomerUseCase> _logger;
+        private readonly IKmsEncryptionService _kmsEncryptionService;
+        private readonly IHashingService _hashingService;
 
-        public CreateCustomerUseCase(ICustomerRepository customerRepository, IValidator<CreateCustomerInput> validator, ILogger<CreateCustomerUseCase> logger)
+        public CreateCustomerUseCase(ICustomerRepository customerRepository, IValidator<CreateCustomerInput> validator, ILogger<CreateCustomerUseCase> logger, IKmsEncryptionService kmsEncryptionService, IHashingService hashingService)
         {
             _customerRepository = customerRepository;
             _validator = validator;
             _logger = logger;
+            _kmsEncryptionService = kmsEncryptionService;
+            _hashingService = hashingService;
         }
 
         public async Task<Result<Customer>> ExecuteAsync(CreateCustomerInput customer)
@@ -38,7 +42,7 @@ namespace Fiap.CustomerService.Application.UseCases.CreateCustomerUseCase
             if (duplicateErrors is not null)
                 return duplicateErrors;
 
-            var newCustomer = BuildCustomer(customer);
+            var newCustomer = await BuildCustomerAsync(customer);
 
             await _customerRepository.AddAsync(newCustomer);
 
@@ -48,13 +52,13 @@ namespace Fiap.CustomerService.Application.UseCases.CreateCustomerUseCase
 
         private async Task<Result<Customer>?> CheckForDuplicatesAsync(CreateCustomerInput customer)
         {
-            if (await _customerRepository.GetByDocumentNumberlAsync(customer.DocumentNumber) is not null)
+            if (await _customerRepository.GetByDocumentNumberlAsync(await _hashingService.HashValue(FormatUtils.UnformatDocumentNumber(customer.DocumentNumber))) is not null)
             {
                 _logger.LogWarning("Duplicate document: {DocumentNumber}", customer.DocumentNumber);
                 return Result<Customer>.Failure(["Customer with this document number already exists."]);
             }
 
-            if (await _customerRepository.GetByEmailAsync(customer.Email) is not null)
+            if (await _customerRepository.GetByEmailAsync(await _hashingService.HashValue(customer.Email)) is not null)
             {
                 _logger.LogWarning("Duplicate email: {Email}", customer.Email);
                 return Result<Customer>.Failure(["Customer with this email already exists."]);
@@ -63,23 +67,25 @@ namespace Fiap.CustomerService.Application.UseCases.CreateCustomerUseCase
             return null;
         }
 
-        private Customer BuildCustomer(CreateCustomerInput customer)
+        private async Task<Customer> BuildCustomerAsync(CreateCustomerInput customer)
         {
             return new Customer
             {
                 Id = Guid.NewGuid(),
                 FirstName = customer.FirstName,
                 LastName = customer.LastName,
-                DocumentNumber = FormatUtils.UnformatDocumentNumber(customer.DocumentNumber),
+                DocumentNumber = await _kmsEncryptionService.EncryptAsync(FormatUtils.UnformatDocumentNumber(customer.DocumentNumber)),
+                DocumentNumberHash = await _hashingService.HashValue(customer.DocumentNumber),
                 DateOfBirth = customer.DateOfBirth,
-                Email = customer.Email,
-                PhoneNumber = FormatUtils.UnformatPhoneNumber(customer.PhoneNumber),
-                Street = customer.Street,
-                HouseNumber = customer.HouseNumber,
-                City = customer.City,
-                State = customer.State,
-                PostalCode = FormatUtils.UnformatPostalCode(customer.PostalCode),
-                Country = customer.Country,
+                Email = await _kmsEncryptionService.EncryptAsync(customer.Email),
+                EmailHash = await _hashingService.HashValue(customer.Email),
+                PhoneNumber = await _kmsEncryptionService.EncryptAsync(FormatUtils.UnformatPhoneNumber(customer.PhoneNumber)),
+                Street = await _kmsEncryptionService.EncryptAsync(customer.Street),
+                HouseNumber = await _kmsEncryptionService.EncryptAsync(customer.HouseNumber),
+                City = await _kmsEncryptionService.EncryptAsync(customer.City),
+                State = await _kmsEncryptionService.EncryptAsync(customer.State),
+                PostalCode = await _kmsEncryptionService.EncryptAsync(FormatUtils.UnformatPostalCode(customer.PostalCode)),
+                Country = await _kmsEncryptionService.EncryptAsync(customer.Country),
                 CreatedAt = DateTime.UtcNow,
                 UpdatedAt = DateTime.UtcNow
             };

@@ -34,8 +34,9 @@ namespace Fiap.CustomerService.Infrastructure.Repositories
         {
             var queryConfig = new QueryConfig
             {
-                IndexName = "DocumentNumber-index"
+                IndexName = "DocumentNumberHash-index"
             };
+
             var search = _context.QueryAsync<Customer>(documentNumber, queryConfig);
             var results = await search.GetNextSetAsync();
             return results.FirstOrDefault();
@@ -45,7 +46,7 @@ namespace Fiap.CustomerService.Infrastructure.Repositories
         {
             var queryConfig = new QueryConfig
             {
-                IndexName = "Email-index"
+                IndexName = "EmailHash-index"
             };
 
             var search = _context.QueryAsync<Customer>(email, queryConfig);

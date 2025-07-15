@@ -6,6 +6,7 @@ using Fiap.CustomerService.Application.UseCases.GetCustomerByDocumentNumberUseCa
 using Fiap.CustomerService.Application.UseCases.GetCustomerByEmailUseCase;
 using Fiap.CustomerService.Application.UseCases.GetCustomerByIdUseCase;
 using Fiap.CustomerService.Application.UseCases.UpdateCustomerUseCase;
+using Fiap.CustomerService.Infrastructure.AwsServices;
 using Fiap.CustomerService.Infrastructure.Extensions;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -18,6 +19,8 @@ builder.Services.AddAWSLambdaHosting(LambdaEventSource.HttpApi);
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+
+builder.Services.Configure<AwsSettings>(builder.Configuration.GetSection("AWS"));
 
 // Add application services
 builder.Services.AddInfrastructure(builder.Configuration);
