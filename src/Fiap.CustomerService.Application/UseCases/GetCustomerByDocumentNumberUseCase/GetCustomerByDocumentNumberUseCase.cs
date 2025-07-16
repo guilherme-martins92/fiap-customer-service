@@ -9,17 +9,17 @@ namespace Fiap.CustomerService.Application.UseCases.GetCustomerByDocumentNumberU
     {
         private readonly ICustomerRepository _customerRepository;
         private readonly ILogger<GetCustomerByDocumentNumberUseCase> _logger;
-        private readonly IKmsEncryptionService _kmsEncryptionService;
         private readonly IHashingService _hashingService;
         private readonly ISensitiveDataDecryptor _sensitiveDataDecryptor;
-        public GetCustomerByDocumentNumberUseCase(ICustomerRepository customerRepository, ILogger<GetCustomerByDocumentNumberUseCase> logger, IKmsEncryptionService kmsEncryptionService, IHashingService hashingService, ISensitiveDataDecryptor sensitiveDataDecryptor)
+
+        public GetCustomerByDocumentNumberUseCase(ICustomerRepository customerRepository, ILogger<GetCustomerByDocumentNumberUseCase> logger, IHashingService hashingService, ISensitiveDataDecryptor sensitiveDataDecryptor)
         {
             _customerRepository = customerRepository;
             _logger = logger;
-            _kmsEncryptionService = kmsEncryptionService;
             _hashingService = hashingService;
             _sensitiveDataDecryptor = sensitiveDataDecryptor;
         }
+
         public async Task<Result<Customer?>> ExecuteAsync(string documentNumber)
         {
             try
