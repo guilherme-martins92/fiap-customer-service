@@ -2,8 +2,9 @@
 
 namespace Fiap.CustomerService.Domain.Interfaces
 {
-    public interface ISensitiveDataDecryptor
+    public interface ISensitiveDataEncryptor
     {
         Task<Customer> DecryptcustomerAsync(Customer customer);
+        Task<Customer> EncryptConsumerAsync(Customer customer);
     }
 }

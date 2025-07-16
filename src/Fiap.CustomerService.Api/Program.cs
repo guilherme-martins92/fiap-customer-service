@@ -1,3 +1,4 @@
+using Fiap.CustomerService.Application.DTOs;
 using Fiap.CustomerService.Application.Extensions;
 using Fiap.CustomerService.Application.UseCases.CreateCustomerUseCase;
 using Fiap.CustomerService.Application.UseCases.DeleteCustomerUseCase;
@@ -37,7 +38,7 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
-app.MapPost("/customers", async (CreateCustomerInput input, CreateCustomerUseCase useCase) =>
+app.MapPost("/customers", async (CustomerInputDto input, CreateCustomerUseCase useCase) =>
 {
     try
     {

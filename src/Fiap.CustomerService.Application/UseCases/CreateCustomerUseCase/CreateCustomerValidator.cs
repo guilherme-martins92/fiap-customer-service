@@ -1,8 +1,9 @@
-﻿using FluentValidation;
+﻿using Fiap.CustomerService.Application.DTOs;
+using FluentValidation;
 
 namespace Fiap.CustomerService.Application.UseCases.CreateCustomerUseCase
 {
-    public class CreateCustomerValidator : AbstractValidator<CreateCustomerInput>
+    public class CreateCustomerValidator : AbstractValidator<CustomerInputDto>
     {
         public CreateCustomerValidator() 
         {

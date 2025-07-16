@@ -22,7 +22,7 @@ namespace Fiap.CustomerService.Infrastructure.Extensions
         {
             services.AddScoped<ICustomerRepository, CustomerRepository>();
             services.AddScoped<IHashingService, HashingService>();
-            services.AddScoped<ISensitiveDataDecryptor, SensitiveDataDecryptor>();
+            services.AddScoped<ISensitiveDataEncryptor, SensitiveDataEncryptor>();
             services.AddScoped<IKmsEncryptionService, KmsEncryptionService>();
 
             // Register DynamoDB client

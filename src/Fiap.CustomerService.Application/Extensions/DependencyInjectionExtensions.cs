@@ -1,4 +1,5 @@
-﻿using Fiap.CustomerService.Application.UseCases.CreateCustomerUseCase;
+﻿using Fiap.CustomerService.Application.DTOs;
+using Fiap.CustomerService.Application.UseCases.CreateCustomerUseCase;
 using Fiap.CustomerService.Application.UseCases.DeleteCustomerUseCase;
 using Fiap.CustomerService.Application.UseCases.GetAllCustomersUseCase;
 using Fiap.CustomerService.Application.UseCases.GetCustomerByDocumentNumberUseCase;
@@ -29,8 +30,9 @@ namespace Fiap.CustomerService.Application.Extensions
             services.AddScoped<DeleteCustomerUseCase>();
             services.AddScoped<UpdateCustomerUseCase>();
             services.AddScoped<GetCustomerByEmailUseCase>();
-            services.AddScoped<IValidator<CreateCustomerInput>, CreateCustomerValidator>();
-            services.AddScoped<IValidator<UpdateCustomerInput>, UpdateCustomerValidator>();
+            services.AddScoped<IValidator<CustomerInputDto>, CreateCustomerValidator>();
+            services.AddScoped<IValidator<UpdateCustomerInput>, UpdateCustomerValidator>();          
+
             return services;
         }
     }

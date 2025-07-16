@@ -10,9 +10,9 @@ namespace Fiap.CustomerService.Application.UseCases.GetCustomerByDocumentNumberU
         private readonly ICustomerRepository _customerRepository;
         private readonly ILogger<GetCustomerByDocumentNumberUseCase> _logger;
         private readonly IHashingService _hashingService;
-        private readonly ISensitiveDataDecryptor _sensitiveDataDecryptor;
+        private readonly ISensitiveDataEncryptor _sensitiveDataDecryptor;
 
-        public GetCustomerByDocumentNumberUseCase(ICustomerRepository customerRepository, ILogger<GetCustomerByDocumentNumberUseCase> logger, IHashingService hashingService, ISensitiveDataDecryptor sensitiveDataDecryptor)
+        public GetCustomerByDocumentNumberUseCase(ICustomerRepository customerRepository, ILogger<GetCustomerByDocumentNumberUseCase> logger, IHashingService hashingService, ISensitiveDataEncryptor sensitiveDataDecryptor)
         {
             _customerRepository = customerRepository;
             _logger = logger;
