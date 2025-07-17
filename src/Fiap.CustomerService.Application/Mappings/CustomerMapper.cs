@@ -1,4 +1,5 @@
-﻿using Fiap.CustomerService.Application.DTOs;
+﻿using Fiap.CustomerService.Application.Common;
+using Fiap.CustomerService.Application.DTOs;
 using Fiap.CustomerService.Domain.Entities;
 
 namespace Fiap.CustomerService.Application.Mappings
@@ -36,15 +37,15 @@ namespace Fiap.CustomerService.Application.Mappings
                 Id = customer.Id,
                 FirstName = customer.FirstName,
                 LastName = customer.LastName,
-                DocumentNumber = customer.DocumentNumber,
+                DocumentNumber = FormatUtils.FormatDocumentNumber(customer.DocumentNumber),
                 DateOfBirth = customer.DateOfBirth,
                 Email = customer.Email,
-                PhoneNumber = customer.PhoneNumber,
+                PhoneNumber = FormatUtils.FormatPhoneNumber(customer.PhoneNumber),
                 Street = customer.Street,
                 HouseNumber = customer.HouseNumber,
                 City = customer.City,
                 State = customer.State,
-                PostalCode = customer.PostalCode,
+                PostalCode = FormatUtils.FormatPostalCode(customer.PostalCode),
                 Country = customer.Country,
                 CreatedAt = customer.CreatedAt,
                 UpdatedAt = customer.UpdatedAt
