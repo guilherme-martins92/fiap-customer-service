@@ -18,9 +18,9 @@ namespace Fiap.CustomerService.Infrastructure.Security
         {
             if (customer is null) return null!;
 
-            customer.DocumentNumber = await _kmsEncryptionService.DecryptAsync(customer.DocumentNumber);       
+            customer.DocumentNumber = await _kmsEncryptionService.DecryptAsync(customer.DocumentNumber);
             customer.PhoneNumber = await _kmsEncryptionService.DecryptAsync(customer.PhoneNumber);
-            customer.Email = await _kmsEncryptionService.DecryptAsync(customer.Email);          
+            customer.Email = await _kmsEncryptionService.DecryptAsync(customer.Email);
             customer.Street = await _kmsEncryptionService.DecryptAsync(customer.Street);
             customer.HouseNumber = await _kmsEncryptionService.DecryptAsync(customer.HouseNumber);
             customer.City = await _kmsEncryptionService.DecryptAsync(customer.City);
@@ -46,6 +46,17 @@ namespace Fiap.CustomerService.Infrastructure.Security
             customer.PostalCode = await _kmsEncryptionService.EncryptAsync(customer.PostalCode);
             customer.Country = await _kmsEncryptionService.EncryptAsync(customer.Country);
             return customer;
+        }
+
+        public async Task<IEnumerable<Customer>> DecryptCustomersAsync(IEnumerable<Customer> customers)
+        {
+            if (customers is null || !customers.Any()) return Enumerable.Empty<Customer>();
+            var decryptedCustomers = new List<Customer>();
+            foreach (var customer in customers)
+            {
+                decryptedCustomers.Add(await DecryptcustomerAsync(customer));
+            }
+            return decryptedCustomers;
         }
     }
 }

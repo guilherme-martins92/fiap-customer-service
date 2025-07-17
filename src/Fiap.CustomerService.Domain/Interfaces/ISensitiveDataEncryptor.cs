@@ -6,5 +6,6 @@ namespace Fiap.CustomerService.Domain.Interfaces
     {
         Task<Customer> DecryptcustomerAsync(Customer customer);
         Task<Customer> EncryptConsumerAsync(Customer customer);
+        Task<IEnumerable<Customer>> DecryptCustomersAsync(IEnumerable<Customer> customers);
     }
 }
