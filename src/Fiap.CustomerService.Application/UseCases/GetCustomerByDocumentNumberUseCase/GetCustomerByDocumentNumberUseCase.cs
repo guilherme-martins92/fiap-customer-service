@@ -30,7 +30,7 @@ namespace Fiap.CustomerService.Application.UseCases.GetCustomerByDocumentNumberU
                     return Result<Customer?>.Failure(new List<string> { "Document number cannot be null or empty." });
                 }
 
-                var customer = await _customerRepository.GetByDocumentNumberlAsync(await _hashingService.HashValue(documentNumber));
+                var customer = await _customerRepository.GetByDocumentNumberlAsync(await _hashingService.HashValue(FormatUtils.UnformatDocumentNumber(documentNumber)));
                 if (customer == null)
                 {
                     _logger.LogInformation("No customer found with document number: {DocumentNumber}", documentNumber);

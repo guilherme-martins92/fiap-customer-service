@@ -35,10 +35,10 @@ namespace Fiap.CustomerService.Infrastructure.Security
         {
             if (customer is null) return null!;
             customer.DocumentNumber = await _kmsEncryptionService.EncryptAsync(customer.DocumentNumber);
-            customer.DocumentNumberHash = await _hashingService.HashValue(customer.DocumentNumber);
+            customer.DocumentNumberHash = customer.DocumentNumberHash is not null ? await _hashingService.HashValue(customer.DocumentNumberHash) : "";
             customer.PhoneNumber = await _kmsEncryptionService.EncryptAsync(customer.PhoneNumber);
             customer.Email = await _kmsEncryptionService.EncryptAsync(customer.Email);
-            customer.EmailHash = await _hashingService.HashValue(customer.Email);
+            customer.EmailHash = customer.EmailHash is not null ? await _hashingService.HashValue(customer.EmailHash) : "";
             customer.Street = await _kmsEncryptionService.EncryptAsync(customer.Street);
             customer.HouseNumber = await _kmsEncryptionService.EncryptAsync(customer.HouseNumber);
             customer.City = await _kmsEncryptionService.EncryptAsync(customer.City);

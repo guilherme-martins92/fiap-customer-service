@@ -30,14 +30,14 @@ namespace Fiap.CustomerService.Infrastructure.Repositories
             return customer;
         }
 
-        public async Task<Customer?> GetByDocumentNumberlAsync(string documentNumber)
+        public async Task<Customer?> GetByDocumentNumberlAsync(string documentHash)
         {
             var queryConfig = new QueryConfig
             {
                 IndexName = "DocumentNumberHash-index"
             };
 
-            var search = _context.QueryAsync<Customer>(documentNumber, queryConfig);
+            var search = _context.QueryAsync<Customer>(documentHash, queryConfig);
             var results = await search.GetNextSetAsync();
             return results.FirstOrDefault();
         }
