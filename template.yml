@@ -29,7 +29,6 @@ Resources:
                 - kms:Encrypt
                 - kms:Decrypt
               Resource: arn:aws:kms:us-east-1:891377307312:key/c1f8ace7-f388-4b78-bede-a90ba5983478
-
       Events:
         ProxyResource:
           Type: HttpApi
